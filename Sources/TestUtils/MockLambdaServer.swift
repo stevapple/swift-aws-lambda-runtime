@@ -18,6 +18,7 @@ import Logging
 import NIOCore
 import NIOHTTP1
 import NIOPosix
+import XCTest
 
 internal final class MockLambdaServer {
     private let logger = Logger(label: "MockLambdaServer")
@@ -258,5 +259,50 @@ extension ErrorResponse {
         } catch {
             return nil
         }
+    }
+}
+
+internal struct SimpleBehavior: LambdaServerBehavior {
+    let requestId: String
+    let event: String
+    let result: Result<String?, TestError>
+
+    init(requestId: String = UUID().uuidString, event: String = "hello", result: Result<String?, TestError> = .success("hello")) {
+        self.requestId = requestId
+        self.event = event
+        self.result = result
+    }
+
+    func getInvocation() -> GetInvocationResult {
+        .success((requestId: self.requestId, event: self.event))
+    }
+
+    func processResponse(requestId: String, response: String?) -> Result<Void, ProcessResponseError> {
+        XCTAssertEqual(self.requestId, requestId, "expecting requestId to match")
+        switch self.result {
+        case .success(let expected):
+            XCTAssertEqual(expected, response, "expecting response to match")
+            return .success(())
+        case .failure:
+            XCTFail("unexpected to fail, but succeeded with: \(response ?? "undefined")")
+            return .failure(.internalServerError)
+        }
+    }
+
+    func processError(requestId: String, error: ErrorResponse) -> Result<Void, ProcessErrorError> {
+        XCTAssertEqual(self.requestId, requestId, "expecting requestId to match")
+        switch self.result {
+        case .success:
+            XCTFail("unexpected to succeed, but failed with: \(error)")
+            return .failure(.internalServerError)
+        case .failure(let expected):
+            XCTAssertEqual(expected.description, error.errorMessage, "expecting error to match")
+            return .success(())
+        }
+    }
+
+    func processInitError(error: ErrorResponse) -> Result<Void, ProcessErrorError> {
+        XCTFail("should not report init error")
+        return .failure(.internalServerError)
     }
 }

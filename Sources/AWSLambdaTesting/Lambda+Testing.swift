@@ -35,15 +35,12 @@
 //     XCTAssertEqual(result, "echo" + input)
 // }
 
-#if swift(>=5.5)
+#if compiler(>=5.5) && canImport(_Concurrency)
 import AWSLambdaRuntime
-import AWSLambdaRuntimeCore
 import Dispatch
 import Logging
 import NIOCore
-import NIOPosix
 
-@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 extension Lambda {
     public struct TestConfig {
         public var requestID: String

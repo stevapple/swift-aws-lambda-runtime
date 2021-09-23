@@ -13,6 +13,7 @@
 //===----------------------------------------------------------------------===//
 
 @testable import AWSLambdaRuntimeCore
+@testable import TestUtils
 import Logging
 import NIOCore
 import NIOPosix

@@ -12,7 +12,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-import AWSLambdaRuntimeCore
 import struct Foundation.Date
 
 extension Lambda.Context {

@@ -2,7 +2,7 @@
 //
 // This source file is part of the SwiftAWSLambdaRuntime open source project
 //
-// Copyright (c) 2017-2018 Apple Inc. and the SwiftAWSLambdaRuntime project authors
+// Copyright (c) 2017-2021 Apple Inc. and the SwiftAWSLambdaRuntime project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -82,8 +82,7 @@ class CodableLambdaTest: XCTestCase {
         XCTAssertEqual(response?.requestId, request.requestId)
     }
 
-    #if swift(>=5.5)
-    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
+    #if compiler(>=5.5) && canImport(_Concurrency)
     func testCodableVoidHandler() {
         struct Handler: LambdaHandler {
             typealias Event = Request
@@ -112,7 +111,6 @@ class CodableLambdaTest: XCTestCase {
         }
     }
 
-    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     func testCodableHandler() {
         struct Handler: LambdaHandler {
             typealias Event = Request
@@ -179,11 +177,10 @@ private struct Response: Codable, Equatable {
     }
 }
 
-#if swift(>=5.5)
+#if compiler(>=5.5) && canImport(_Concurrency)
 // NOTE: workaround until we have async test support on linux
 //         https://github.com/apple/swift-corelibs-xctest/pull/326
 extension XCTestCase {
-    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     func XCTAsyncTest(
         expectationDescription: String = "Async operation",
         timeout: TimeInterval = 3,

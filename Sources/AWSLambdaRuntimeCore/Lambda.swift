@@ -2,7 +2,7 @@
 //
 // This source file is part of the SwiftAWSLambdaRuntime open source project
 //
-// Copyright (c) 2017-2018 Apple Inc. and the SwiftAWSLambdaRuntime project authors
+// Copyright (c) 2017-2021 Apple Inc. and the SwiftAWSLambdaRuntime project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -52,20 +52,6 @@ public enum Lambda {
         }
         return String(cString: value)
     }
-
-    #if swift(>=5.5)
-    // for testing and internal use
-    @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
-    internal static func run<Handler: LambdaHandler>(configuration: Configuration = .init(), handlerType: Handler.Type) -> Result<Int, Error> {
-        self.run(configuration: configuration, factory: { context -> EventLoopFuture<ByteBufferLambdaHandler> in
-            let promise = context.eventLoop.makePromise(of: ByteBufferLambdaHandler.self)
-            promise.completeWithTask {
-                try await Handler(context: context)
-            }
-            return promise.futureResult
-        })
-    }
-    #endif
 
     // for testing and internal use
     internal static func run(configuration: Configuration = .init(), factory: @escaping HandlerFactory) -> Result<Int, Error> {

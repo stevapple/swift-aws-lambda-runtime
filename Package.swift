@@ -5,9 +5,9 @@ import PackageDescription
 let package = Package(
     name: "swift-aws-lambda-runtime",
     products: [
-        // this library exports `AWSLambdaRuntimeCore` and adds Foundation convenience methods
+        // this library exports `AWSLambdaRuntimeCore` with async `LambdaHandler`, and adds Foundation convenience methods
         .library(name: "AWSLambdaRuntime", targets: ["AWSLambdaRuntime"]),
-        // this has all the main functionality for lambda and it does not link Foundation
+        // this has all the functionality for `EventLoop`-based lambda and it does not link Foundation
         .library(name: "AWSLambdaRuntimeCore", targets: ["AWSLambdaRuntimeCore"]),
         // for testing only
         .library(name: "AWSLambdaTesting", targets: ["AWSLambdaTesting"]),
@@ -31,14 +31,23 @@ let package = Package(
             .product(name: "NIOConcurrencyHelpers", package: "swift-nio"),
             .product(name: "NIOPosix", package: "swift-nio"),
         ]),
+        // for package testing
+        .target(name: "TestUtils", dependencies: [
+            .byName(name: "AWSLambdaRuntimeCore"),
+        ]),
+        .testTarget(name: "TestUtilsTests", dependencies: [
+            .byName(name: "TestUtils"),
+        ]),
         .testTarget(name: "AWSLambdaRuntimeCoreTests", dependencies: [
             .byName(name: "AWSLambdaRuntimeCore"),
+            .byName(name: "TestUtils"),
             .product(name: "NIOTestUtils", package: "swift-nio"),
             .product(name: "NIOFoundationCompat", package: "swift-nio"),
         ]),
         .testTarget(name: "AWSLambdaRuntimeTests", dependencies: [
             .byName(name: "AWSLambdaRuntimeCore"),
             .byName(name: "AWSLambdaRuntime"),
+            .byName(name: "TestUtils"),
         ]),
         // testing helper
         .target(name: "AWSLambdaTesting", dependencies: [

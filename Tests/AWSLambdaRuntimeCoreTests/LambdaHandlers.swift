@@ -12,6 +12,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+@testable import TestUtils
 import AWSLambdaRuntimeCore
 import NIOCore
 
