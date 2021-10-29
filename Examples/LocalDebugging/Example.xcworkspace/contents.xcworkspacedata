@@ -2,13 +2,13 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Shared">
+      location = "group:MyApp.swiftpm">
    </FileRef>
    <FileRef
       location = "group:MyLambda">
    </FileRef>
    <FileRef
-      location = "group:MyApp/MyApp.xcodeproj">
+      location = "group:Shared">
    </FileRef>
    <FileRef
       location = "group:README.md">

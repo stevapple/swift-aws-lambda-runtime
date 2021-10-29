@@ -6,7 +6,7 @@ would be invoked by the AWS Lambda Runtime engine.
 
 The example includes an Xcode workspace with three modules:
 
-1. [MyApp](MyApp) is a SwiftUI iOS application that calls the Lambda function.
+1. [MyApp](MyApp.swiftpm) is a SwiftUI Playground application that calls the Lambda function.
 2. [MyLambda](MyLambda) is a SwiftPM executable package for the Lambda function.
 3. [Shared](Shared) is a SwiftPM library package used for shared code between the iOS application and the Lambda function,
 such as the Request and Response model objects.
