@@ -59,6 +59,7 @@ extension Lambda {
 }
 
 // MARK: - Context
+
 public protocol LambdaContext: CustomDebugStringConvertible {
     associatedtype Invocation: LambdaInvocation
 

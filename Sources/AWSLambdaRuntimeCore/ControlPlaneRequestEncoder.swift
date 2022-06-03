@@ -1,3 +1,17 @@
+//===----------------------------------------------------------------------===//
+//
+// This source file is part of the SwiftAWSLambdaRuntime open source project
+//
+// Copyright (c) 2021-2022 Apple Inc. and the SwiftAWSLambdaRuntime project authors
+// Licensed under Apache License v2.0
+//
+// See LICENSE.txt for license information
+// See CONTRIBUTORS.txt for the list of SwiftAWSLambdaRuntime project authors
+//
+// SPDX-License-Identifier: Apache-2.0
+//
+//===----------------------------------------------------------------------===//
+
 @_spi(Lambda) import LambdaRuntimeCore
 import NIOCore
 
@@ -74,39 +88,39 @@ extension AWSLambda {
     }
 }
 
-private extension String {
-    static let CRLF: String = "\r\n"
+extension String {
+    fileprivate static let CRLF: String = "\r\n"
 
-    static let userAgentHeader: String = "user-agent: Swift-Lambda/Unknown\r\n"
-    static let unhandledErrorHeader: String = "lambda-runtime-function-error-type: Unhandled\r\n"
+    fileprivate static let userAgentHeader: String = "user-agent: Swift-Lambda/Unknown\r\n"
+    fileprivate static let unhandledErrorHeader: String = "lambda-runtime-function-error-type: Unhandled\r\n"
 
-    static let nextInvocationRequestLine: String =
+    fileprivate static let nextInvocationRequestLine: String =
         "GET /2018-06-01/runtime/invocation/next HTTP/1.1\r\n"
 
-    static let runtimeInitErrorRequestLine: String =
+    fileprivate static let runtimeInitErrorRequestLine: String =
         "POST /2018-06-01/runtime/init/error HTTP/1.1\r\n"
 }
 
-private extension ByteBuffer {
-    mutating func writeInvocationResultRequestLine(_ requestID: LambdaRequestID) {
+extension ByteBuffer {
+    fileprivate mutating func writeInvocationResultRequestLine(_ requestID: LambdaRequestID) {
         self.writeString("POST /2018-06-01/runtime/invocation/")
         self.writeRequestID(requestID)
         self.writeString("/response HTTP/1.1\r\n")
     }
 
-    mutating func writeInvocationErrorRequestLine(_ requestID: LambdaRequestID) {
+    fileprivate mutating func writeInvocationErrorRequestLine(_ requestID: LambdaRequestID) {
         self.writeString("POST /2018-06-01/runtime/invocation/")
         self.writeRequestID(requestID)
         self.writeString("/error HTTP/1.1\r\n")
     }
 
-    mutating func writeHostHeader(host: String) {
+    fileprivate mutating func writeHostHeader(host: String) {
         self.writeString("host: ")
         self.writeString(host)
         self.writeString(.CRLF)
     }
 
-    mutating func writeContentLengthHeader(length: Int) {
+    fileprivate mutating func writeContentLengthHeader(length: Int) {
         self.writeString("content-length: ")
         self.writeString("\(length)")
         self.writeString(.CRLF)

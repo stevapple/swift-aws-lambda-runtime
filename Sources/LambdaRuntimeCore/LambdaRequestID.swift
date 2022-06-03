@@ -315,8 +315,8 @@ extension LambdaRequestID {
 }
 
 @_spi(Lambda)
-public extension ByteBuffer {
-    func getRequestID(at index: Int) -> LambdaRequestID? {
+extension ByteBuffer {
+    public func getRequestID(at index: Int) -> LambdaRequestID? {
         guard let range = self.rangeWithinReadableBytes(index: index, length: 36) else {
             return nil
         }
@@ -325,7 +325,7 @@ public extension ByteBuffer {
         }
     }
 
-    mutating func readRequestID() -> LambdaRequestID? {
+    public mutating func readRequestID() -> LambdaRequestID? {
         guard let requestID = self.getRequestID(at: self.readerIndex) else {
             return nil
         }
@@ -334,7 +334,7 @@ public extension ByteBuffer {
     }
 
     @discardableResult
-    mutating func setRequestID(_ requestID: LambdaRequestID, at index: Int) -> Int {
+    public mutating func setRequestID(_ requestID: LambdaRequestID, at index: Int) -> Int {
         var localBytes = requestID.toAsciiBytesOnStack(characters: LambdaRequestID.lowercaseLookup)
         return withUnsafeBytes(of: &localBytes) {
             self.setBytes($0, at: index)
@@ -342,14 +342,14 @@ public extension ByteBuffer {
     }
 
     @discardableResult
-    mutating func writeRequestID(_ requestID: LambdaRequestID) -> Int {
+    public mutating func writeRequestID(_ requestID: LambdaRequestID) -> Int {
         let length = self.setRequestID(requestID, at: self.writerIndex)
         self.moveWriterIndex(forwardBy: length)
         return length
     }
 
     // copy and pasted from NIOCore
-    func rangeWithinReadableBytes(index: Int, length: Int) -> Range<Int>? {
+    public func rangeWithinReadableBytes(index: Int, length: Int) -> Range<Int>? {
         guard index >= self.readerIndex && length >= 0 else {
             return nil
         }

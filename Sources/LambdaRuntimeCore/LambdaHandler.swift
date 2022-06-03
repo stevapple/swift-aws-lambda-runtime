@@ -81,7 +81,7 @@ public protocol LambdaHandler: EventLoopLambdaHandler {
 }
 #endif
 
-//@_spi(Lambda)
+// @_spi(Lambda)
 @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 extension LambdaHandler {
     public static func makeHandler(context: Lambda.InitializationContext) -> EventLoopFuture<Self> {
@@ -195,7 +195,7 @@ extension EventLoopLambdaHandler where Output == Void {
 ///         Most users are not expected to use this protocol.
 public protocol ByteBufferLambdaHandler {
     associatedtype Provider: LambdaProvider
-    
+
     /// Create your Lambda handler for the runtime.
     ///
     /// Use this to initialize all your resources that you want to cache between invocations. This could be database

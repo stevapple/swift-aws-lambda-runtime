@@ -20,6 +20,6 @@ public protocol ControlPlaneResponseDecoder: NIOSingleStepByteToMessageDecoder {
 }
 
 @_spi(Lambda)
-public extension ControlPlaneResponseDecoder where InboundOut == ControlPlaneResponse<Invocation> {
-    typealias Response = ControlPlaneResponse<Invocation>
+extension ControlPlaneResponseDecoder where InboundOut == ControlPlaneResponse<Invocation> {
+    public typealias Response = ControlPlaneResponse<Invocation>
 }

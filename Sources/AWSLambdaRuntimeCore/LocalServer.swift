@@ -2,7 +2,7 @@
 //
 // This source file is part of the SwiftAWSLambdaRuntime open source project
 //
-// Copyright (c) 2020 Apple Inc. and the SwiftAWSLambdaRuntime project authors
+// Copyright (c) 2020-2022 Apple Inc. and the SwiftAWSLambdaRuntime project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -13,8 +13,8 @@
 //===----------------------------------------------------------------------===//
 
 #if DEBUG
-@_spi(Lambda) import LambdaRuntimeCore
 import Dispatch
+@_spi(Lambda) import LambdaRuntimeCore
 import Logging
 import NIOCore
 import NIOHTTP1
