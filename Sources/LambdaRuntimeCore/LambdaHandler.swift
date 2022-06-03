@@ -48,9 +48,10 @@ public protocol LambdaHandler: EventLoopLambdaHandler {
     ///     - context: Runtime `Context`.
     ///
     /// - Returns: A Lambda result ot type `Output`.
-    func handle(_ event: Event, context: LambdaContext) async throws -> Output
+    func handle(_ event: Event, context: Context) async throws -> Output
 }
 
+//@_spi(Lambda)
 @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 extension LambdaHandler {
     public static func makeHandler(context: Lambda.InitializationContext) -> EventLoopFuture<Self> {
@@ -61,7 +62,7 @@ extension LambdaHandler {
         return promise.futureResult
     }
 
-    public func handle(_ event: Event, context: LambdaContext) -> EventLoopFuture<Output> {
+    public func handle(_ event: Event, context: Context) -> EventLoopFuture<Output> {
         let promise = context.eventLoop.makePromise(of: Output.self)
         promise.completeWithTask {
             try await self.handle(event, context: context)
@@ -105,7 +106,7 @@ public protocol EventLoopLambdaHandler: ByteBufferLambdaHandler {
     ///
     /// - Returns: An `EventLoopFuture` to report the result of the Lambda back to the runtime engine.
     ///            The `EventLoopFuture` should be completed with either a response of type `Output` or an `Error`
-    func handle(_ event: Event, context: LambdaContext) -> EventLoopFuture<Output>
+    func handle(_ event: Event, context: Context) -> EventLoopFuture<Output>
 
     /// Encode a response of type `Output` to `ByteBuffer`
     /// Concrete Lambda handlers implement this method to provide coding functionality.
@@ -129,7 +130,7 @@ public protocol EventLoopLambdaHandler: ByteBufferLambdaHandler {
 extension EventLoopLambdaHandler {
     /// Driver for `ByteBuffer` -> `Event` decoding and `Output` -> `ByteBuffer` encoding
     @inlinable
-    public func handle(_ event: ByteBuffer, context: LambdaContext) -> EventLoopFuture<ByteBuffer?> {
+    public func handle(_ event: ByteBuffer, context: Context) -> EventLoopFuture<ByteBuffer?> {
         let input: Event
         do {
             input = try self.decode(buffer: event)
@@ -163,6 +164,8 @@ extension EventLoopLambdaHandler where Output == Void {
 ///         ``LambdaHandler`` based APIs.
 ///         Most users are not expected to use this protocol.
 public protocol ByteBufferLambdaHandler {
+    associatedtype Context: LambdaContext
+    
     /// Create your Lambda handler for the runtime.
     ///
     /// Use this to initialize all your resources that you want to cache between invocations. This could be database
@@ -180,7 +183,7 @@ public protocol ByteBufferLambdaHandler {
     ///
     /// - Returns: An `EventLoopFuture` to report the result of the Lambda back to the runtime engine.
     ///            The `EventLoopFuture` should be completed with either a response encoded as `ByteBuffer` or an `Error`
-    func handle(_ event: ByteBuffer, context: LambdaContext) -> EventLoopFuture<ByteBuffer?>
+    func handle(_ event: ByteBuffer, context: Context) -> EventLoopFuture<ByteBuffer?>
 
     /// Clean up the Lambda resources asynchronously.
     /// Concrete Lambda handlers implement this method to shutdown resources like `HTTPClient`s and database connections.
@@ -190,13 +193,19 @@ public protocol ByteBufferLambdaHandler {
     func shutdown(context: Lambda.ShutdownContext) -> EventLoopFuture<Void>
 }
 
+@_spi(Lambda)
+extension ByteBufferLambdaHandler where Context: ConcreteLambdaContext {
+    public typealias Provider = Context.Provider
+}
+
 extension ByteBufferLambdaHandler {
     public func shutdown(context: Lambda.ShutdownContext) -> EventLoopFuture<Void> {
         context.eventLoop.makeSucceededFuture(())
     }
 }
 
-extension ByteBufferLambdaHandler {
+@_spi(Lambda)
+extension ByteBufferLambdaHandler where Context: ConcreteLambdaContext {
     /// Initializes and runs the lambda function.
     ///
     /// If you precede your ``ByteBufferLambdaHandler`` conformer's declaration with the
@@ -206,14 +215,10 @@ extension ByteBufferLambdaHandler {
     /// The lambda runtime provides a default implementation of the method that manages the launch
     /// process.
     public static func main() {
-        #if false
-        _ = Lambda.run(configuration: .init(), handlerType: Self.self)
-        #else
-
         #if DEBUG
         if Lambda.env("LOCAL_LAMBDA_SERVER_ENABLED").flatMap(Bool.init) ?? false {
             do {
-                return try Lambda.withLocalServer {
+                return try Provider.withLocalServer {
                     NewLambdaRuntime.run(handlerType: Self.self)
                 }
             } catch {
@@ -225,7 +230,6 @@ extension ByteBufferLambdaHandler {
         }
         #else
         NewLambdaRuntime.run(handlerType: Self.self)
-        #endif
         #endif
     }
 }

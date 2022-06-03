@@ -2,7 +2,7 @@
 //
 // This source file is part of the SwiftAWSLambdaRuntime open source project
 //
-// Copyright (c) 2017-2020 Apple Inc. and the SwiftAWSLambdaRuntime project authors
+// Copyright (c) 2022 Apple Inc. and the SwiftAWSLambdaRuntime project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -12,13 +12,13 @@
 //
 //===----------------------------------------------------------------------===//
 
-import struct Foundation.Date
-@_spi(Lambda) import AWSLambdaRuntimeCore
+import NIOCore
 
-@_spi(Lambda)
-extension AWSLambda.Context {
-    var deadlineDate: Date {
-        let secondsSinceEpoch = Double(Int64(bitPattern: self.deadline.rawValue)) / -1_000_000_000
-        return Date(timeIntervalSince1970: secondsSinceEpoch)
-    }
+@_spi(Lambda) public protocol ControlPlaneResponseDecoder: NIOSingleStepByteToMessageDecoder {
+    associatedtype Invocation: LambdaInvocation where InboundOut == ControlPlaneResponse<Invocation>
+    init()
+}
+
+@_spi(Lambda) public extension ControlPlaneResponseDecoder {
+    typealias Response = ControlPlaneResponse<Invocation>
 }

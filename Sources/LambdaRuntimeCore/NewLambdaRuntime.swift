@@ -25,7 +25,10 @@ import Glibc
 /// `LambdaRuntime` manages the Lambda process lifecycle.
 ///
 /// - note: All state changes are dispatched onto the supplied EventLoop.
-public final class NewLambdaRuntime<Handler: ByteBufferLambdaHandler> {
+final class NewLambdaRuntime<Handler: ByteBufferLambdaHandler> where Handler.Context: ConcreteLambdaContext {
+    typealias Invocation = Handler.Context.Invocation
+    typealias Context = Handler.Context
+
     private let eventLoop: EventLoop
     private let shutdownPromise: EventLoopPromise<Void>
     private let logger: Logger
@@ -137,7 +140,7 @@ public final class NewLambdaRuntime<Handler: ByteBufferLambdaHandler> {
 
         case .invokeHandler(let handler, let invocation, let event):
             self.logger.trace("invoking handler")
-            let context = LambdaContext(
+            let context = Context(
                 logger: self.logger,
                 eventLoop: self.eventLoop,
                 allocator: .init(),
@@ -237,7 +240,7 @@ public final class NewLambdaRuntime<Handler: ByteBufferLambdaHandler> {
 }
 
 extension NewLambdaRuntime: LambdaChannelHandlerDelegate {
-    func responseReceived(_ response: ControlPlaneResponse) {
+    func responseReceived(_ response: ControlPlaneResponse<Invocation>) {
         let action: StateMachine.Action
         switch response {
         case .next(let invocation, let byteBuffer):

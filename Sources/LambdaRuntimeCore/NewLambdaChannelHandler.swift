@@ -15,7 +15,9 @@
 import NIOCore
 
 protocol LambdaChannelHandlerDelegate {
-    func responseReceived(_: ControlPlaneResponse)
+    associatedtype Handler: ByteBufferLambdaHandler where Handler.Context: ConcreteLambdaContext
+
+    func responseReceived(_: ControlPlaneResponse<Handler.Context.Invocation>)
 
     func errorCaught(_: Error)
 
@@ -31,15 +33,15 @@ final class NewLambdaChannelHandler<Delegate: LambdaChannelHandlerDelegate>: Cha
 
     private var context: ChannelHandlerContext!
 
-    private var encoder: ControlPlaneRequestEncoder
-    private var decoder: NIOSingleStepByteToMessageProcessor<ControlPlaneResponseDecoder>
+    private var encoder: Delegate.Handler.Provider.RequestEncoder
+    private var decoder: NIOSingleStepByteToMessageProcessor<Delegate.Handler.Provider.ResponseDecoder>
 
     init(delegate: Delegate, host: String) {
         self.delegate = delegate
         self.requestsInFlight = CircularBuffer<ControlPlaneRequest>(initialCapacity: 4)
 
-        self.encoder = ControlPlaneRequestEncoder(host: host)
-        self.decoder = NIOSingleStepByteToMessageProcessor(ControlPlaneResponseDecoder(), maximumBufferSize: 7 * 1024 * 1024)
+        self.encoder = .init(host: host)
+        self.decoder = NIOSingleStepByteToMessageProcessor(.init(), maximumBufferSize: 7 * 1024 * 1024)
     }
 
     func sendRequest(_ request: ControlPlaneRequest) {

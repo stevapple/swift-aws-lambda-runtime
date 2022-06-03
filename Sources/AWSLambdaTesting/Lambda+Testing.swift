@@ -78,7 +78,7 @@ extension Lambda {
             eventLoop: eventLoop
         )
 
-        let context = LambdaContext.__forTestsOnly(
+        let context = ConcreteLambdaContext.__forTestsOnly(
             requestID: config.requestID,
             traceID: config.traceID,
             invokedFunctionARN: config.invokedFunctionARN,

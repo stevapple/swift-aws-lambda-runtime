@@ -17,7 +17,7 @@ import NIOCore
 // This is heavily inspired by:
 // https://github.com/swift-extras/swift-extras-uuid
 
-struct LambdaRequestID {
+public struct LambdaRequestID {
     typealias uuid_t = (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
 
     var uuid: uuid_t {
@@ -27,11 +27,11 @@ struct LambdaRequestID {
     static let null: uuid_t = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
     /// Creates a random [v4](https://tools.ietf.org/html/rfc4122#section-4.1.3) UUID.
-    init() {
+    public init() {
         self = Self.generateRandom()
     }
 
-    init?(uuidString: String) {
+    public init?(uuidString: String) {
         guard uuidString.utf8.count == 36 else {
             return nil
         }
@@ -65,7 +65,7 @@ struct LambdaRequestID {
     private let _uuid: uuid_t
 
     /// Returns a lowercase string representation for the `LambdaRequestID`, such as "e621e1f8-c36c-495a-93fc-0c247a3e6e5f"
-    var lowercased: String {
+    public var lowercased: String {
         var bytes = self.toAsciiBytesOnStack(characters: Self.lowercaseLookup)
         return withUnsafeBytes(of: &bytes) {
             String(decoding: $0, as: Unicode.UTF8.self)
@@ -73,7 +73,7 @@ struct LambdaRequestID {
     }
 
     /// Returns an uppercase string representation for the `LambdaRequestID`, such as "E621E1F8-C36C-495A-93FC-0C247A3E6E5F"
-    var uppercased: String {
+    public var uppercased: String {
         var bytes = self.toAsciiBytesOnStack(characters: Self.uppercaseLookup)
         return withUnsafeBytes(of: &bytes) {
             String(decoding: $0, as: Unicode.UTF8.self)
@@ -108,7 +108,7 @@ struct LambdaRequestID {
 
 extension LambdaRequestID: Equatable {
     // sadly no auto conformance from the compiler
-    static func == (lhs: Self, rhs: Self) -> Bool {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs._uuid.0 == rhs._uuid.0 &&
             lhs._uuid.1 == rhs._uuid.1 &&
             lhs._uuid.2 == rhs._uuid.2 &&
@@ -129,7 +129,7 @@ extension LambdaRequestID: Equatable {
 }
 
 extension LambdaRequestID: Hashable {
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         var value = self._uuid
         withUnsafeBytes(of: &value) { ptr in
             hasher.combine(bytes: ptr)
@@ -138,19 +138,19 @@ extension LambdaRequestID: Hashable {
 }
 
 extension LambdaRequestID: CustomStringConvertible {
-    var description: String {
+    public var description: String {
         self.lowercased
     }
 }
 
 extension LambdaRequestID: CustomDebugStringConvertible {
-    var debugDescription: String {
+    public var debugDescription: String {
         self.lowercased
     }
 }
 
-extension LambdaRequestID: Decodable {
-    init(from decoder: Decoder) throws {
+extension LambdaRequestID: Codable {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let uuidString = try container.decode(String.self)
 
@@ -160,10 +160,8 @@ extension LambdaRequestID: Decodable {
 
         self = uuid
     }
-}
 
-extension LambdaRequestID: Encodable {
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(self.lowercased)
     }
@@ -315,7 +313,7 @@ extension LambdaRequestID {
     }
 }
 
-extension ByteBuffer {
+public extension ByteBuffer {
     func getRequestID(at index: Int) -> LambdaRequestID? {
         guard let range = self.rangeWithinReadableBytes(index: index, length: 36) else {
             return nil

@@ -14,84 +14,58 @@
 
 import NIOCore
 import NIOHTTP1
+@_spi(Lambda) import LambdaRuntimeCore
 
-enum ControlPlaneRequest: Hashable {
-    case next
-    case invocationResponse(LambdaRequestID, ByteBuffer?)
-    case invocationError(LambdaRequestID, ErrorResponse)
-    case initializationError(ErrorResponse)
-}
+@_spi(Lambda)
+extension AWSLambda {
+    public struct Invocation: LambdaInvocation {
+        public var requestID: String
+        public var deadlineInMillisSinceEpoch: Int64
+        public var invokedFunctionARN: String
+        public var traceID: String
+        public var clientContext: String?
+        public var cognitoIdentity: String?
 
-enum ControlPlaneResponse: Hashable {
-    case next(Invocation, ByteBuffer)
-    case accepted
-    case error(ErrorResponse)
-}
-
-struct Invocation: Hashable {
-    var requestID: String
-    var deadlineInMillisSinceEpoch: Int64
-    var invokedFunctionARN: String
-    var traceID: String
-    var clientContext: String?
-    var cognitoIdentity: String?
-
-    init(requestID: String,
-         deadlineInMillisSinceEpoch: Int64,
-         invokedFunctionARN: String,
-         traceID: String,
-         clientContext: String?,
-         cognitoIdentity: String?) {
-        self.requestID = requestID
-        self.deadlineInMillisSinceEpoch = deadlineInMillisSinceEpoch
-        self.invokedFunctionARN = invokedFunctionARN
-        self.traceID = traceID
-        self.clientContext = clientContext
-        self.cognitoIdentity = cognitoIdentity
-    }
-
-    init(headers: HTTPHeaders) throws {
-        guard let requestID = headers.first(name: AmazonHeaders.requestID), !requestID.isEmpty else {
-            throw Lambda.RuntimeError.invocationMissingHeader(AmazonHeaders.requestID)
+        init(requestID: String,
+             deadlineInMillisSinceEpoch: Int64,
+             invokedFunctionARN: String,
+             traceID: String,
+             clientContext: String?,
+             cognitoIdentity: String?) {
+            self.requestID = requestID
+            self.deadlineInMillisSinceEpoch = deadlineInMillisSinceEpoch
+            self.invokedFunctionARN = invokedFunctionARN
+            self.traceID = traceID
+            self.clientContext = clientContext
+            self.cognitoIdentity = cognitoIdentity
         }
 
-        guard let deadline = headers.first(name: AmazonHeaders.deadline),
-              let unixTimeInMilliseconds = Int64(deadline)
-        else {
-            throw Lambda.RuntimeError.invocationMissingHeader(AmazonHeaders.deadline)
+        public init(headers: HTTPHeaders) throws {
+            guard let requestID = headers.first(name: AmazonHeaders.requestID), !requestID.isEmpty else {
+                throw LambdaRuntimeError.invocationHeadMissingRequestID
+            }
+
+            guard let deadline = headers.first(name: AmazonHeaders.deadline) else {
+                throw LambdaRuntimeError.invocationHeadMissingDeadlineInMillisSinceEpoch
+            }
+            guard let unixTimeInMilliseconds = Int64(deadline) else {
+                throw LambdaRuntimeError.responseHeadInvalidDeadlineValue
+            }
+
+            guard let invokedFunctionARN = headers.first(name: AmazonHeaders.invokedFunctionARN) else {
+                throw LambdaRuntimeError.invocationHeadMissingFunctionARN
+            }
+
+            let traceID = headers.first(name: AmazonHeaders.traceID) ?? "Root=\(AmazonHeaders.generateXRayTraceID());Sampled=0"
+
+            self.init(
+                requestID: requestID,
+                deadlineInMillisSinceEpoch: unixTimeInMilliseconds,
+                invokedFunctionARN: invokedFunctionARN,
+                traceID: traceID,
+                clientContext: headers["Lambda-Runtime-Client-Context"].first,
+                cognitoIdentity: headers["Lambda-Runtime-Cognito-Identity"].first
+            )
         }
-
-        guard let invokedFunctionARN = headers.first(name: AmazonHeaders.invokedFunctionARN) else {
-            throw Lambda.RuntimeError.invocationMissingHeader(AmazonHeaders.invokedFunctionARN)
-        }
-
-        let traceID = headers.first(name: AmazonHeaders.traceID) ?? "Root=\(AmazonHeaders.generateXRayTraceID());Sampled=0"
-
-        self.init(
-            requestID: requestID,
-            deadlineInMillisSinceEpoch: unixTimeInMilliseconds,
-            invokedFunctionARN: invokedFunctionARN,
-            traceID: traceID,
-            clientContext: headers["Lambda-Runtime-Client-Context"].first,
-            cognitoIdentity: headers["Lambda-Runtime-Cognito-Identity"].first
-        )
-    }
-}
-
-struct ErrorResponse: Hashable, Codable {
-    var errorType: String
-    var errorMessage: String
-}
-
-extension ErrorResponse {
-    internal func toJSONBytes() -> [UInt8] {
-        var bytes = [UInt8]()
-        bytes.append(UInt8(ascii: "{"))
-        bytes.append(contentsOf: #""errorType":"#.utf8)
-        self.errorType.encodeAsJSONString(into: &bytes)
-        bytes.append(contentsOf: #","errorMessage":"#.utf8)
-        self.errorMessage.encodeAsJSONString(into: &bytes)
-        bytes.append(UInt8(ascii: "}"))
-        return bytes
     }
 }

@@ -2,7 +2,7 @@
 //
 // This source file is part of the SwiftAWSLambdaRuntime open source project
 //
-// Copyright (c) 2017-2020 Apple Inc. and the SwiftAWSLambdaRuntime project authors
+// Copyright (c) 2017-2018 Apple Inc. and the SwiftAWSLambdaRuntime project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE.txt for license information
@@ -12,13 +12,23 @@
 //
 //===----------------------------------------------------------------------===//
 
-import struct Foundation.Date
-@_spi(Lambda) import AWSLambdaRuntimeCore
+#if os(Linux)
+import Glibc
+#else
+import Darwin.C
+#endif
 
-@_spi(Lambda)
-extension AWSLambda.Context {
-    var deadlineDate: Date {
-        let secondsSinceEpoch = Double(Int64(bitPattern: self.deadline.rawValue)) / -1_000_000_000
-        return Date(timeIntervalSince1970: secondsSinceEpoch)
+import Backtrace
+import Logging
+import NIOCore
+import NIOPosix
+
+public enum Lambda {
+    /// Utility to access/read environment variables
+    public static func env(_ name: String) -> String? {
+        guard let value = getenv(name) else {
+            return nil
+        }
+        return String(cString: value)
     }
 }

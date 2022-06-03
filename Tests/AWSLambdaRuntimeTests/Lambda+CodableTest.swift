@@ -101,7 +101,7 @@ class CodableLambdaTest: XCTestCase {
 
             init(context: Lambda.InitializationContext) async throws {}
 
-            func handle(_ event: Request, context: LambdaContext) async throws {
+            func handle(_ event: Request, context: ConcreteLambdaContext) async throws {
                 XCTAssertEqual(event, self.expected)
             }
         }
@@ -130,7 +130,7 @@ class CodableLambdaTest: XCTestCase {
 
             init(context: Lambda.InitializationContext) async throws {}
 
-            func handle(_ event: Request, context: LambdaContext) async throws -> Response {
+            func handle(_ event: Request, context: ConcreteLambdaContext) async throws -> Response {
                 XCTAssertEqual(event, self.expected)
                 return Response(requestId: event.requestId)
             }
