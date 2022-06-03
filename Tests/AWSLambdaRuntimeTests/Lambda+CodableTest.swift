@@ -21,7 +21,6 @@ import NIOFoundationCompat
 import NIOPosix
 import XCTest
 
-// FIXME: We should replace `LambdaHandler` with `AWSLambdaHandler` once the compiler support is implemented.
 class CodableLambdaTest: XCTestCase {
     var eventLoopGroup: EventLoopGroup!
     let allocator = ByteBufferAllocator()
@@ -97,8 +96,7 @@ class CodableLambdaTest: XCTestCase {
     #if compiler(>=5.5) && canImport(_Concurrency)
     @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     func testCodableVoidHandler() {
-        struct Handler: LambdaHandler {
-            typealias Provider = AWSLambda
+        struct Handler: AWSLambdaHandler {
             typealias Event = Request
             typealias Output = Void
 
@@ -127,8 +125,7 @@ class CodableLambdaTest: XCTestCase {
 
     @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     func testCodableHandler() {
-        struct Handler: LambdaHandler {
-            typealias Provider = AWSLambda
+        struct Handler: AWSLambdaHandler {
             typealias Event = Request
             typealias Output = Response
 

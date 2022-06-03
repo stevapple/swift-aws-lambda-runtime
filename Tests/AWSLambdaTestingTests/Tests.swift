@@ -18,7 +18,6 @@ import AWSLambdaTesting
 import NIOCore
 import XCTest
 
-// FIXME: We should use `AWSLambdaHandler` once the compiler support is implemented.
 @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 class LambdaTestingTests: XCTestCase {
     func testCodableClosure() {
@@ -30,8 +29,7 @@ class LambdaTestingTests: XCTestCase {
             let message: String
         }
 
-        struct MyLambda: LambdaHandler {
-            typealias Provider = AWSLambda
+        struct MyLambda: AWSLambdaHandler {
             typealias Event = Request
             typealias Output = Response
 
@@ -55,8 +53,7 @@ class LambdaTestingTests: XCTestCase {
             let name: String
         }
 
-        struct MyLambda: LambdaHandler {
-            typealias Provider = AWSLambda
+        struct MyLambda: AWSLambdaHandler {
             typealias Event = Request
             typealias Output = Void
 
@@ -76,8 +73,7 @@ class LambdaTestingTests: XCTestCase {
     func testInvocationFailure() {
         struct MyError: Error {}
 
-        struct MyLambda: LambdaHandler {
-            typealias Provider = AWSLambda
+        struct MyLambda: AWSLambdaHandler {
             typealias Event = String
             typealias Output = Void
 
@@ -94,8 +90,7 @@ class LambdaTestingTests: XCTestCase {
     }
 
     func testAsyncLongRunning() {
-        struct MyLambda: LambdaHandler {
-            typealias Provider = AWSLambda
+        struct MyLambda: AWSLambdaHandler {
             typealias Event = String
             typealias Output = String
 
