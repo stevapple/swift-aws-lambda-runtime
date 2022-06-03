@@ -268,7 +268,7 @@ extension NewLambdaRuntime {
     static func run(handlerType: Handler.Type) {
         Backtrace.install()
 
-        let configuration = Lambda.Configuration()
+        let configuration = Lambda.Configuration(runtimeEngine: Handler.Provider.runtimeEngineAddress)
         var logger = Logger(label: "Lambda")
         logger.logLevel = configuration.general.logLevel
 

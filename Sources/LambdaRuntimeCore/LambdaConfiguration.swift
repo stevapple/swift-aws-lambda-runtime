@@ -23,11 +23,11 @@ extension Lambda {
         public let lifecycle: Lifecycle
         public let runtimeEngine: RuntimeEngine
 
-        public init() {
-            self.init(general: .init(), lifecycle: .init(), runtimeEngine: .init())
+        public init(runtimeEngine address: String? = nil) {
+            self.init(general: .init(), lifecycle: .init(), runtimeEngine: .init(address: address))
         }
 
-        init(general: General? = nil, lifecycle: Lifecycle? = nil, runtimeEngine: RuntimeEngine? = nil) {
+        public init(general: General? = nil, lifecycle: Lifecycle? = nil, runtimeEngine: RuntimeEngine? = nil) {
             self.general = general ?? General()
             self.lifecycle = lifecycle ?? Lifecycle()
             self.runtimeEngine = runtimeEngine ?? RuntimeEngine()
@@ -68,7 +68,7 @@ extension Lambda {
             public let requestTimeout: TimeAmount?
 
             init(address: String? = nil, keepAlive: Bool? = nil, requestTimeout: TimeAmount? = nil) {
-                let ipPort = (address ?? env("AWS_LAMBDA_RUNTIME_API"))?.split(separator: ":") ?? ["127.0.0.1", "7000"]
+                let ipPort = address?.split(separator: ":") ?? ["127.0.0.1", "7000"]
                 guard ipPort.count == 2, let port = Int(ipPort[1]) else {
                     preconditionFailure("invalid ip+port configuration \(ipPort)")
                 }
