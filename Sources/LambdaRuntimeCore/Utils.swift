@@ -38,6 +38,20 @@ internal enum Signal: Int32 {
 }
 
 @_spi(Lambda)
+extension DispatchWallTime {
+    public init(millisSinceEpoch: Int64) {
+        let nanoSinceEpoch = UInt64(millisSinceEpoch) * 1_000_000
+        let seconds = UInt64(nanoSinceEpoch / 1_000_000_000)
+        let nanoseconds = nanoSinceEpoch - (seconds * 1_000_000_000)
+        self.init(timespec: timespec(tv_sec: Int(seconds), tv_nsec: Int(nanoseconds)))
+    }
+
+    public var millisSinceEpoch: Int64 {
+        Int64(bitPattern: self.rawValue) / -1_000_000
+    }
+}
+
+@_spi(Lambda)
 extension String {
     public func encodeAsJSONString(into bytes: inout [UInt8]) {
         bytes.append(UInt8(ascii: "\""))

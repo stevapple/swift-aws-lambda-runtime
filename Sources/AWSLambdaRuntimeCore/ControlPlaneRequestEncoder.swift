@@ -11,7 +11,7 @@ extension AWSLambda {
             self.host = host
         }
 
-        @_spi(Lambda) public mutating func writeRequest(_ request: ControlPlaneRequest, context: ChannelHandlerContext, promise: EventLoopPromise<Void>?) {
+        public mutating func writeRequest(_ request: ControlPlaneRequest, context: ChannelHandlerContext, promise: EventLoopPromise<Void>?) {
             self.byteBuffer.clear(minimumCapacity: self.byteBuffer.storageCapacity)
 
             switch request {
@@ -74,7 +74,7 @@ extension AWSLambda {
     }
 }
 
-extension String {
+private extension String {
     static let CRLF: String = "\r\n"
 
     static let userAgentHeader: String = "user-agent: Swift-Lambda/Unknown\r\n"
@@ -87,29 +87,28 @@ extension String {
         "POST /2018-06-01/runtime/init/error HTTP/1.1\r\n"
 }
 
-extension ByteBuffer {
-    fileprivate mutating func writeInvocationResultRequestLine(_ requestID: LambdaRequestID) {
+private extension ByteBuffer {
+    mutating func writeInvocationResultRequestLine(_ requestID: LambdaRequestID) {
         self.writeString("POST /2018-06-01/runtime/invocation/")
         self.writeRequestID(requestID)
         self.writeString("/response HTTP/1.1\r\n")
     }
 
-    fileprivate mutating func writeInvocationErrorRequestLine(_ requestID: LambdaRequestID) {
+    mutating func writeInvocationErrorRequestLine(_ requestID: LambdaRequestID) {
         self.writeString("POST /2018-06-01/runtime/invocation/")
         self.writeRequestID(requestID)
         self.writeString("/error HTTP/1.1\r\n")
     }
 
-    fileprivate mutating func writeHostHeader(host: String) {
+    mutating func writeHostHeader(host: String) {
         self.writeString("host: ")
         self.writeString(host)
         self.writeString(.CRLF)
     }
 
-    fileprivate mutating func writeContentLengthHeader(length: Int) {
+    mutating func writeContentLengthHeader(length: Int) {
         self.writeString("content-length: ")
         self.writeString("\(length)")
         self.writeString(.CRLF)
     }
 }
-

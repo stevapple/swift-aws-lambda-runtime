@@ -29,6 +29,7 @@ import NIOPosix
 //         callback(.success("Hello, \(event)!"))
 //     }
 // }
+@_spi(Lambda)
 extension AWSLambda {
     /// Execute code in the context of a mock Lambda server.
     ///
@@ -37,8 +38,7 @@ extension AWSLambda {
     ///     - body: Code to run within the context of the mock server. Typically this would be a Lambda.run function call.
     ///
     /// - note: This API is designed stricly for local testing and is behind a DEBUG flag
-    @_spi(Lambda)
-    public static func withLocalServer<Value>(invocationEndpoint: String? = nil, _ body: @escaping () -> Value) throws -> Value {
+    public static func withLocalServer<Value>(invocationEndpoint: String?, _ body: @escaping () -> Value) throws -> Value {
         let server = LocalLambda.Server(invocationEndpoint: invocationEndpoint)
         try server.start().wait()
         defer { try! server.stop() }

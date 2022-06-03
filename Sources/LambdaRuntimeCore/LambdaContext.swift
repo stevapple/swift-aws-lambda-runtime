@@ -61,7 +61,6 @@ extension Lambda {
 // MARK: - Context
 public protocol LambdaContext: CustomDebugStringConvertible {
     associatedtype Invocation: LambdaInvocation
-    associatedtype Provider: LambdaProvider where Provider.Invocation == Self.Invocation
 
     var requestID: String { get }
     var logger: Logger { get }

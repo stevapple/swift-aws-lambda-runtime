@@ -26,8 +26,8 @@ import Glibc
 ///
 /// - note: All state changes are dispatched onto the supplied EventLoop.
 final class NewLambdaRuntime<Handler: ByteBufferLambdaHandler> {
-    typealias Invocation = Handler.Context.Invocation
-    typealias Context = Handler.Context
+    typealias Context = Handler.Provider.Context
+    typealias Invocation = Handler.Provider.Invocation
 
     private let eventLoop: EventLoop
     private let shutdownPromise: EventLoopPromise<Void>

@@ -1,5 +1,5 @@
-import NIOCore
 @_spi(Lambda) import LambdaRuntimeCore
+import NIOCore
 
 @_spi(Lambda)
 extension AWSLambda {

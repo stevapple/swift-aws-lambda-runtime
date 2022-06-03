@@ -152,7 +152,6 @@ extension AWSLambda {
 }
 
 extension AWSLambda.Context: LambdaContext {
-    public typealias Provider = AWSLambda
     public typealias Invocation = AWSLambda.Invocation
 
     public init(logger: Logger, eventLoop: EventLoop, allocator: ByteBufferAllocator, invocation: Invocation) {
