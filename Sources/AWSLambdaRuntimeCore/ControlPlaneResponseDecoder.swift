@@ -5,6 +5,7 @@ import NIOCore
 extension AWSLambda {
     public struct ResponseDecoder: ControlPlaneResponseDecoder {
         public typealias Invocation = AWSLambda.Invocation
+        public typealias InboundOut = ControlPlaneResponse<Invocation>
 
         private enum State {
             case waitingForNewResponse

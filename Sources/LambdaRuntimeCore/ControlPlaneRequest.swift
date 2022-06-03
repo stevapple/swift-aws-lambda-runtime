@@ -15,7 +15,6 @@
 import NIOCore
 import NIOHTTP1
 
-
 public protocol LambdaInvocation: Hashable {
     @_spi(Lambda) var requestID: String { get }
     @_spi(Lambda) init(headers: HTTPHeaders) throws

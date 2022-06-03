@@ -37,6 +37,8 @@ final class NewLambdaChannelHandler<Delegate: LambdaChannelHandlerDelegate>: Cha
     private var decoder: NIOSingleStepByteToMessageProcessor<Delegate.Handler.Provider.ResponseDecoder>
 
     init(delegate: Delegate, host: String) {
+        precondition(Delegate.Handler.Provider.ResponseDecoder.InboundOut.self == ControlPlaneResponse<Delegate.Handler.Provider.Invocation>.self)
+
         self.delegate = delegate
         self.requestsInFlight = CircularBuffer<ControlPlaneRequest>(initialCapacity: 4)
 
@@ -67,7 +69,7 @@ final class NewLambdaChannelHandler<Delegate: LambdaChannelHandlerDelegate>: Cha
                     throw LambdaRuntimeError.unsolicitedResponse
                 }
 
-                self.delegate.responseReceived(response)
+                self.delegate.responseReceived(response as! ControlPlaneResponse<Delegate.Handler.Provider.Invocation>)
             }
         } catch {
             self.delegate.errorCaught(error)
