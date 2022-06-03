@@ -14,12 +14,14 @@
 
 @testable import AWSLambdaRuntime
 @testable import AWSLambdaRuntimeCore
+@testable import LambdaRuntimeCore
 import Logging
 import NIOCore
 import NIOFoundationCompat
 import NIOPosix
 import XCTest
 
+// FIXME: We should replace `LambdaHandler` with `AWSLambdaHandler` once the compiler support is implemented.
 class CodableLambdaTest: XCTestCase {
     var eventLoopGroup: EventLoopGroup!
     let allocator = ByteBufferAllocator()
@@ -38,6 +40,7 @@ class CodableLambdaTest: XCTestCase {
         var outputBuffer: ByteBuffer?
 
         struct Handler: EventLoopLambdaHandler {
+            typealias Provider = AWSLambda
             typealias Event = Request
             typealias Output = Void
 
@@ -47,7 +50,7 @@ class CodableLambdaTest: XCTestCase {
                 context.eventLoop.makeSucceededFuture(Handler())
             }
 
-            func handle(_ event: Request, context: LambdaContext) -> EventLoopFuture<Void> {
+            func handle(_ event: Request, context: Context) -> EventLoopFuture<Void> {
                 XCTAssertEqual(event, self.expected)
                 return context.eventLoop.makeSucceededVoidFuture()
             }
@@ -67,6 +70,7 @@ class CodableLambdaTest: XCTestCase {
         var response: Response?
 
         struct Handler: EventLoopLambdaHandler {
+            typealias Provider = AWSLambda
             typealias Event = Request
             typealias Output = Response
 
@@ -76,7 +80,7 @@ class CodableLambdaTest: XCTestCase {
                 context.eventLoop.makeSucceededFuture(Handler())
             }
 
-            func handle(_ event: Request, context: LambdaContext) -> EventLoopFuture<Response> {
+            func handle(_ event: Request, context: Context) -> EventLoopFuture<Response> {
                 XCTAssertEqual(event, self.expected)
                 return context.eventLoop.makeSucceededFuture(Response(requestId: event.requestId))
             }
@@ -94,6 +98,7 @@ class CodableLambdaTest: XCTestCase {
     @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     func testCodableVoidHandler() {
         struct Handler: LambdaHandler {
+            typealias Provider = AWSLambda
             typealias Event = Request
             typealias Output = Void
 
@@ -101,7 +106,7 @@ class CodableLambdaTest: XCTestCase {
 
             init(context: Lambda.InitializationContext) async throws {}
 
-            func handle(_ event: Request, context: LambdaContext) async throws {
+            func handle(_ event: Request, context: Context) async throws {
                 XCTAssertEqual(event, self.expected)
             }
         }
@@ -123,6 +128,7 @@ class CodableLambdaTest: XCTestCase {
     @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     func testCodableHandler() {
         struct Handler: LambdaHandler {
+            typealias Provider = AWSLambda
             typealias Event = Request
             typealias Output = Response
 
@@ -130,7 +136,7 @@ class CodableLambdaTest: XCTestCase {
 
             init(context: Lambda.InitializationContext) async throws {}
 
-            func handle(_ event: Request, context: LambdaContext) async throws -> Response {
+            func handle(_ event: Request, context: Context) async throws -> Response {
                 XCTAssertEqual(event, self.expected)
                 return Response(requestId: event.requestId)
             }
@@ -154,8 +160,8 @@ class CodableLambdaTest: XCTestCase {
     #endif
 
     // convenience method
-    func newContext() -> LambdaContext {
-        LambdaContext(
+    func newContext() -> AWSLambda.Context {
+        AWSLambda.Context(
             requestID: UUID().uuidString,
             traceID: "abc123",
             invokedFunctionARN: "aws:arn:",

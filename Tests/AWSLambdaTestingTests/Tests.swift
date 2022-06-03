@@ -18,6 +18,7 @@ import AWSLambdaTesting
 import NIOCore
 import XCTest
 
+// FIXME: We should use `AWSLambdaHandler` once the compiler support is implemented.
 @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
 class LambdaTestingTests: XCTestCase {
     func testCodableClosure() {
@@ -30,12 +31,13 @@ class LambdaTestingTests: XCTestCase {
         }
 
         struct MyLambda: LambdaHandler {
+            typealias Provider = AWSLambda
             typealias Event = Request
             typealias Output = Response
 
             init(context: Lambda.InitializationContext) {}
 
-            func handle(_ event: Request, context: LambdaContext) async throws -> Response {
+            func handle(_ event: Request, context: Context) async throws -> Response {
                 Response(message: "echo" + event.name)
             }
         }
@@ -54,12 +56,13 @@ class LambdaTestingTests: XCTestCase {
         }
 
         struct MyLambda: LambdaHandler {
+            typealias Provider = AWSLambda
             typealias Event = Request
             typealias Output = Void
 
             init(context: Lambda.InitializationContext) {}
 
-            func handle(_ event: Request, context: LambdaContext) async throws {
+            func handle(_ event: Request, context: Context) async throws {
                 LambdaTestingTests.VoidLambdaHandlerInvokeCount += 1
             }
         }
@@ -74,12 +77,13 @@ class LambdaTestingTests: XCTestCase {
         struct MyError: Error {}
 
         struct MyLambda: LambdaHandler {
+            typealias Provider = AWSLambda
             typealias Event = String
             typealias Output = Void
 
             init(context: Lambda.InitializationContext) {}
 
-            func handle(_ event: String, context: LambdaContext) async throws {
+            func handle(_ event: String, context: Context) async throws {
                 throw MyError()
             }
         }
@@ -91,12 +95,13 @@ class LambdaTestingTests: XCTestCase {
 
     func testAsyncLongRunning() {
         struct MyLambda: LambdaHandler {
+            typealias Provider = AWSLambda
             typealias Event = String
             typealias Output = String
 
             init(context: Lambda.InitializationContext) {}
 
-            func handle(_ event: String, context: LambdaContext) async throws -> String {
+            func handle(_ event: String, context: Context) async throws -> String {
                 try await Task.sleep(nanoseconds: 500 * 1000 * 1000)
                 return event
             }

@@ -35,14 +35,15 @@ let package = Package(
             .product(name: "NIOCore", package: "swift-nio"),
             .product(name: "NIOPosix", package: "swift-nio"),
         ]),
-        .testTarget(name: "AWSLambdaRuntimeCoreTests", dependencies: [
-            .byName(name: "AWSLambdaRuntimeCore"),
-            .product(name: "NIOTestUtils", package: "swift-nio"),
-            .product(name: "NIOFoundationCompat", package: "swift-nio"),
-        ]),
+//        .testTarget(name: "AWSLambdaRuntimeCoreTests", dependencies: [
+//            .byName(name: "AWSLambdaRuntimeCore"),
+//            .product(name: "NIOTestUtils", package: "swift-nio"),
+//            .product(name: "NIOFoundationCompat", package: "swift-nio"),
+//        ]),
         .testTarget(name: "AWSLambdaRuntimeTests", dependencies: [
-            .byName(name: "AWSLambdaRuntimeCore"),
             .byName(name: "AWSLambdaRuntime"),
+            .byName(name: "AWSLambdaRuntimeCore"),
+            .byName(name: "LambdaRuntimeCore"),
         ]),
         // testing helper
         .target(name: "AWSLambdaTesting", dependencies: [
