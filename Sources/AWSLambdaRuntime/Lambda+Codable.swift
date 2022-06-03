@@ -12,7 +12,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-@_spi(Lambda) import LambdaRuntimeCore
+import LambdaRuntimeCore
 import struct Foundation.Data
 import class Foundation.JSONDecoder
 import class Foundation.JSONEncoder
@@ -22,7 +22,6 @@ import NIOFoundationCompat
 // MARK: - Codable support
 
 /// Implementation of  a`ByteBuffer` to `Event` decoding
-@_spi(Lambda)
 extension EventLoopLambdaHandler where Event: Decodable {
     @inlinable
     public func decode(buffer: ByteBuffer) throws -> Event {
@@ -31,7 +30,6 @@ extension EventLoopLambdaHandler where Event: Decodable {
 }
 
 /// Implementation of  `Output` to `ByteBuffer` encoding
-@_spi(Lambda)
 extension EventLoopLambdaHandler where Output: Encodable {
     @inlinable
     public func encode(allocator: ByteBufferAllocator, value: Output) throws -> ByteBuffer? {
@@ -41,7 +39,6 @@ extension EventLoopLambdaHandler where Output: Encodable {
 
 /// Default `ByteBuffer` to `Event` decoder using Foundation's JSONDecoder
 /// Advanced users that want to inject their own codec can do it by overriding these functions.
-@_spi(Lambda)
 extension EventLoopLambdaHandler where Event: Decodable {
     public var decoder: LambdaCodableDecoder {
         Lambda.defaultJSONDecoder
@@ -50,7 +47,6 @@ extension EventLoopLambdaHandler where Event: Decodable {
 
 /// Default `Output` to `ByteBuffer` encoder using Foundation's JSONEncoder
 /// Advanced users that want to inject their own codec can do it by overriding these functions.
-@_spi(Lambda)
 extension EventLoopLambdaHandler where Output: Encodable {
     public var encoder: LambdaCodableEncoder {
         Lambda.defaultJSONEncoder

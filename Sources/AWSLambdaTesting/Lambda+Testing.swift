@@ -64,7 +64,7 @@ extension Lambda {
         _ handlerType: Handler.Type,
         with event: Handler.Event,
         using config: TestConfig = .init()
-    ) throws -> Handler.Output {
+    ) throws -> Handler.Output where Handler.Context == AWSLambda.Context {
         let logger = Logger(label: "test")
         let eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         defer {
@@ -78,7 +78,7 @@ extension Lambda {
             eventLoop: eventLoop
         )
 
-        let context = ConcreteLambdaContext.__forTestsOnly(
+        let context = AWSLambda.Context.__forTestsOnly(
             requestID: config.requestID,
             traceID: config.traceID,
             invokedFunctionARN: config.invokedFunctionARN,

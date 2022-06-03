@@ -15,7 +15,6 @@
 import struct Foundation.Date
 @_spi(Lambda) import AWSLambdaRuntimeCore
 
-@_spi(Lambda)
 extension AWSLambda.Context {
     var deadlineDate: Date {
         let secondsSinceEpoch = Double(Int64(bitPattern: self.deadline.rawValue)) / -1_000_000_000

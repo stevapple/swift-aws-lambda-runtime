@@ -12,7 +12,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-@_spi(Lambda) public struct LambdaRuntimeError: Error, Hashable {
+@_spi(Lambda)
+public struct LambdaRuntimeError: Error, Hashable {
     enum Base: Hashable {
         case unsolicitedResponse
         case unexpectedStatusCode

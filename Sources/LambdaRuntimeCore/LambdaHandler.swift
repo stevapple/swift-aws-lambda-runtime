@@ -164,7 +164,7 @@ extension EventLoopLambdaHandler where Output == Void {
 ///         ``LambdaHandler`` based APIs.
 ///         Most users are not expected to use this protocol.
 public protocol ByteBufferLambdaHandler {
-    associatedtype Context: LambdaContext
+    associatedtype Provider: LambdaProvider
     
     /// Create your Lambda handler for the runtime.
     ///
@@ -183,7 +183,7 @@ public protocol ByteBufferLambdaHandler {
     ///
     /// - Returns: An `EventLoopFuture` to report the result of the Lambda back to the runtime engine.
     ///            The `EventLoopFuture` should be completed with either a response encoded as `ByteBuffer` or an `Error`
-    func handle(_ event: ByteBuffer, context: Context) -> EventLoopFuture<ByteBuffer?>
+    func handle(_ event: ByteBuffer, context: Provider.Context) -> EventLoopFuture<ByteBuffer?>
 
     /// Clean up the Lambda resources asynchronously.
     /// Concrete Lambda handlers implement this method to shutdown resources like `HTTPClient`s and database connections.
@@ -193,9 +193,8 @@ public protocol ByteBufferLambdaHandler {
     func shutdown(context: Lambda.ShutdownContext) -> EventLoopFuture<Void>
 }
 
-@_spi(Lambda)
-extension ByteBufferLambdaHandler where Context: ConcreteLambdaContext {
-    public typealias Provider = Context.Provider
+extension ByteBufferLambdaHandler {
+    public typealias Context = Provider.Context
 }
 
 extension ByteBufferLambdaHandler {
@@ -204,8 +203,7 @@ extension ByteBufferLambdaHandler {
     }
 }
 
-@_spi(Lambda)
-extension ByteBufferLambdaHandler where Context: ConcreteLambdaContext {
+extension ByteBufferLambdaHandler {
     /// Initializes and runs the lambda function.
     ///
     /// If you precede your ``ByteBufferLambdaHandler`` conformer's declaration with the

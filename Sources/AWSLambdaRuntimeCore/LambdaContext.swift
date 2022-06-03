@@ -151,8 +151,7 @@ extension AWSLambda {
     }
 }
 
-@_spi(Lambda)
-extension AWSLambda.Context: ConcreteLambdaContext {
+extension AWSLambda.Context: LambdaContext {
     public typealias Provider = AWSLambda
     public typealias Invocation = AWSLambda.Invocation
 

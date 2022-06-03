@@ -14,10 +14,9 @@
 
 import NIOCore
 
-@_spi(Lambda)
 public protocol ControlPlaneRequestEncoder: _EmittingChannelHandler where OutboundOut == ByteBuffer {
-    init(host: String)
-    mutating func writeRequest(_ request: ControlPlaneRequest, context: ChannelHandlerContext, promise: EventLoopPromise<Void>?)
-    mutating func writerAdded(context: ChannelHandlerContext)
-    mutating func writerRemoved(context: ChannelHandlerContext)
+    @_spi(Lambda) init(host: String)
+    @_spi(Lambda) mutating func writeRequest(_ request: ControlPlaneRequest, context: ChannelHandlerContext, promise: EventLoopPromise<Void>?)
+    @_spi(Lambda) mutating func writerAdded(context: ChannelHandlerContext)
+    @_spi(Lambda) mutating func writerRemoved(context: ChannelHandlerContext)
 }

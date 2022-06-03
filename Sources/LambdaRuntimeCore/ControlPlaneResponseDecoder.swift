@@ -14,11 +14,13 @@
 
 import NIOCore
 
-@_spi(Lambda) public protocol ControlPlaneResponseDecoder: NIOSingleStepByteToMessageDecoder {
-    associatedtype Invocation: LambdaInvocation where InboundOut == ControlPlaneResponse<Invocation>
+public protocol ControlPlaneResponseDecoder: NIOSingleStepByteToMessageDecoder {
+    associatedtype Invocation: LambdaInvocation
     init()
 }
 
-@_spi(Lambda) public extension ControlPlaneResponseDecoder {
+@_spi(Lambda)
+public extension ControlPlaneResponseDecoder {
     typealias Response = ControlPlaneResponse<Invocation>
+    typealias InboundOut = ControlPlaneResponse<Invocation>
 }

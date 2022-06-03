@@ -17,6 +17,7 @@ import NIOCore
 // This is heavily inspired by:
 // https://github.com/swift-extras/swift-extras-uuid
 
+@_spi(Lambda)
 public struct LambdaRequestID {
     typealias uuid_t = (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
 
@@ -313,6 +314,7 @@ extension LambdaRequestID {
     }
 }
 
+@_spi(Lambda)
 public extension ByteBuffer {
     func getRequestID(at index: Int) -> LambdaRequestID? {
         guard let range = self.rangeWithinReadableBytes(index: index, length: 36) else {

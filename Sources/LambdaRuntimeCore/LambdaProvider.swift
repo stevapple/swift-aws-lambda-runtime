@@ -1,9 +1,10 @@
-@_spi(Lambda) public protocol LambdaProvider  {
+public protocol LambdaProvider  {
     associatedtype Invocation: LambdaInvocation
     associatedtype RequestEncoder: ControlPlaneRequestEncoder
-    associatedtype Context: ConcreteLambdaContext where Context.Provider == Self
+    associatedtype Context: LambdaContext where Context.Provider == Self
     associatedtype ResponseDecoder: ControlPlaneResponseDecoder where ResponseDecoder.Invocation == Self.Invocation
 
+    @_spi(Lambda)
     static func withLocalServer<Value>(invocationEndpoint: String?, _ body: @escaping () -> Value) throws -> Value
 }
 

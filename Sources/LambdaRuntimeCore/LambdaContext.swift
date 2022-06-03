@@ -60,16 +60,13 @@ extension Lambda {
 
 // MARK: - Context
 public protocol LambdaContext: CustomDebugStringConvertible {
+    associatedtype Invocation: LambdaInvocation
+    associatedtype Provider: LambdaProvider where Provider.Invocation == Self.Invocation
+
     var requestID: String { get }
     var logger: Logger { get }
     var eventLoop: EventLoop { get }
     var allocator: ByteBufferAllocator { get }
-}
-
-@_spi(Lambda)
-public protocol ConcreteLambdaContext: LambdaContext {
-    associatedtype Invocation: LambdaInvocation
-    associatedtype Provider: LambdaProvider where Provider.Invocation == Self.Invocation
 
     init(logger: Logger, eventLoop: EventLoop, allocator: ByteBufferAllocator, invocation: Invocation)
 }

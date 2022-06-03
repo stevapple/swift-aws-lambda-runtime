@@ -13,7 +13,7 @@
 //===----------------------------------------------------------------------===//
 
 #if DEBUG
-import LambdaRuntimeCore
+@_spi(Lambda) import LambdaRuntimeCore
 import Dispatch
 import Logging
 import NIOConcurrencyHelpers

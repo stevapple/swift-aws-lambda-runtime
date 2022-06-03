@@ -25,7 +25,7 @@ import Glibc
 /// `LambdaRuntime` manages the Lambda process lifecycle.
 ///
 /// - note: All state changes are dispatched onto the supplied EventLoop.
-final class NewLambdaRuntime<Handler: ByteBufferLambdaHandler> where Handler.Context: ConcreteLambdaContext {
+final class NewLambdaRuntime<Handler: ByteBufferLambdaHandler> {
     typealias Invocation = Handler.Context.Invocation
     typealias Context = Handler.Context
 

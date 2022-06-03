@@ -16,15 +16,14 @@ import NIOCore
 import NIOHTTP1
 @_spi(Lambda) import LambdaRuntimeCore
 
-@_spi(Lambda)
 extension AWSLambda {
     public struct Invocation: LambdaInvocation {
-        public var requestID: String
-        public var deadlineInMillisSinceEpoch: Int64
-        public var invokedFunctionARN: String
-        public var traceID: String
-        public var clientContext: String?
-        public var cognitoIdentity: String?
+        @_spi(Lambda) public var requestID: String
+        @_spi(Lambda) public var deadlineInMillisSinceEpoch: Int64
+        @_spi(Lambda) public var invokedFunctionARN: String
+        @_spi(Lambda) public var traceID: String
+        @_spi(Lambda) public var clientContext: String?
+        @_spi(Lambda) public var cognitoIdentity: String?
 
         init(requestID: String,
              deadlineInMillisSinceEpoch: Int64,
@@ -40,6 +39,7 @@ extension AWSLambda {
             self.cognitoIdentity = cognitoIdentity
         }
 
+        @_spi(Lambda)
         public init(headers: HTTPHeaders) throws {
             guard let requestID = headers.first(name: AmazonHeaders.requestID), !requestID.isEmpty else {
                 throw LambdaRuntimeError.invocationHeadMissingRequestID

@@ -17,6 +17,7 @@ import Logging
 import NIOCore
 
 extension Lambda {
+    @_spi(Lambda)
     public struct Configuration: CustomStringConvertible {
         public let general: General
         public let lifecycle: Lifecycle
