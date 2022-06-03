@@ -12,9 +12,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-import NIOCore
-import NIOHTTP1
 @_spi(Lambda) import LambdaRuntimeCore
+import NIOHTTP1
 
 extension AWSLambda {
     public struct Invocation: LambdaInvocation {

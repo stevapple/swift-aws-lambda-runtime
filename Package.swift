@@ -25,19 +25,14 @@ let package = Package(
         ]),
         .target(name: "AWSLambdaRuntimeCore", dependencies: [
             .byName(name: "LambdaRuntimeCore"),
-            .product(name: "Logging", package: "swift-log"),
-            .product(name: "Backtrace", package: "swift-backtrace"),
             .product(name: "NIOHTTP1", package: "swift-nio"),
             .product(name: "NIOCore", package: "swift-nio"),
-            .product(name: "NIOConcurrencyHelpers", package: "swift-nio"),
-            .product(name: "NIOPosix", package: "swift-nio"),
         ]),
         .target(name: "LambdaRuntimeCore", dependencies: [
             .product(name: "Logging", package: "swift-log"),
             .product(name: "Backtrace", package: "swift-backtrace"),
             .product(name: "NIOHTTP1", package: "swift-nio"),
             .product(name: "NIOCore", package: "swift-nio"),
-            .product(name: "NIOConcurrencyHelpers", package: "swift-nio"),
             .product(name: "NIOPosix", package: "swift-nio"),
         ]),
         .testTarget(name: "AWSLambdaRuntimeCoreTests", dependencies: [

@@ -12,8 +12,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-import struct Foundation.Date
 @_spi(Lambda) import AWSLambdaRuntimeCore
+import struct Foundation.Date
 
 extension AWSLambda.Context {
     var deadlineDate: Date {

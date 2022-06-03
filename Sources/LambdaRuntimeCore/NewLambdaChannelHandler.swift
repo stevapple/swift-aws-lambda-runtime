@@ -17,7 +17,7 @@ import NIOCore
 protocol LambdaChannelHandlerDelegate {
     associatedtype Handler: ByteBufferLambdaHandler
 
-    func responseReceived(_: ControlPlaneResponse<Handler.Context.Invocation>)
+    func responseReceived(_: ControlPlaneResponse<Handler.Provider.Invocation>)
 
     func errorCaught(_: Error)
 

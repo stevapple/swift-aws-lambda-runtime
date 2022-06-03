@@ -16,7 +16,6 @@
 @_spi(Lambda) import LambdaRuntimeCore
 import Dispatch
 import Logging
-import NIOConcurrencyHelpers
 import NIOCore
 import NIOHTTP1
 import NIOPosix

@@ -12,7 +12,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-import LambdaRuntimeCore
+@_exported import AWSLambdaRuntimeCore
 import struct Foundation.Data
 import class Foundation.JSONDecoder
 import class Foundation.JSONEncoder

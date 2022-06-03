@@ -14,7 +14,6 @@
 
 import Backtrace
 import Logging
-import NIOConcurrencyHelpers
 import NIOCore
 import NIOPosix
 

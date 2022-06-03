@@ -23,6 +23,35 @@ import Glibc
 // MARK: - LambdaHandler
 
 #if compiler(>=5.5) && canImport(_Concurrency)
+#if compiler(>=5.7)
+/// Strongly typed, processing protocol for a Lambda that takes a user defined
+/// ``EventLoopLambdaHandler/Event`` and returns a user defined
+/// ``EventLoopLambdaHandler/Output`` asynchronously.
+///
+/// - note: Most users should implement this protocol instead of the lower
+///         level protocols ``EventLoopLambdaHandler`` and
+///         ``ByteBufferLambdaHandler``.
+@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
+public protocol LambdaHandler<Provider>: EventLoopLambdaHandler {
+    /// The Lambda initialization method
+    /// Use this method to initialize resources that will be used in every request.
+    ///
+    /// Examples for this can be HTTP or database clients.
+    /// - parameters:
+    ///     - context: Runtime `InitializationContext`.
+    init(context: Lambda.InitializationContext) async throws
+
+    /// The Lambda handling method
+    /// Concrete Lambda handlers implement this method to provide the Lambda functionality.
+    ///
+    /// - parameters:
+    ///     - event: Event of type `Event` representing the event or request.
+    ///     - context: Runtime `Context`.
+    ///
+    /// - Returns: A Lambda result ot type `Output`.
+    func handle(_ event: Event, context: Context) async throws -> Output
+}
+#else
 /// Strongly typed, processing protocol for a Lambda that takes a user defined
 /// ``EventLoopLambdaHandler/Event`` and returns a user defined
 /// ``EventLoopLambdaHandler/Output`` asynchronously.
@@ -50,6 +79,7 @@ public protocol LambdaHandler: EventLoopLambdaHandler {
     /// - Returns: A Lambda result ot type `Output`.
     func handle(_ event: Event, context: Context) async throws -> Output
 }
+#endif
 
 //@_spi(Lambda)
 @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
