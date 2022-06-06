@@ -7,8 +7,10 @@ let package = Package(
     products: [
         // this library exports `AWSLambdaRuntimeCore` and adds Foundation convenience methods
         .library(name: "AWSLambdaRuntime", targets: ["AWSLambdaRuntime"]),
-        // this has all the main functionality for lambda and it does not link Foundation
+        // this has all the main functionality for AWS Lambda and it does not link Foundation
         .library(name: "AWSLambdaRuntimeCore", targets: ["AWSLambdaRuntimeCore"]),
+//        // this is the supporting library for any AWS-like lambda runtime
+//        .library(name: "LambdaRuntimeCore", targets: ["LambdaRuntimeCore"]),
         // for testing only
         .library(name: "AWSLambdaTesting", targets: ["AWSLambdaTesting"]),
     ],

@@ -16,7 +16,7 @@ import NIOCore
 
 public protocol ControlPlaneResponseDecoder: NIOSingleStepByteToMessageDecoder {
     associatedtype Invocation: LambdaInvocation
-    init()
+    @_spi(Lambda) init()
 }
 
 @_spi(Lambda)

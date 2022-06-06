@@ -39,7 +39,6 @@ class CodableLambdaTest: XCTestCase {
         var outputBuffer: ByteBuffer?
 
         struct Handler: EventLoopLambdaHandler {
-            typealias Provider = AWSLambda
             typealias Event = Request
             typealias Output = Void
 
@@ -69,7 +68,6 @@ class CodableLambdaTest: XCTestCase {
         var response: Response?
 
         struct Handler: EventLoopLambdaHandler {
-            typealias Provider = AWSLambda
             typealias Event = Request
             typealias Output = Response
 
@@ -96,7 +94,7 @@ class CodableLambdaTest: XCTestCase {
     #if compiler(>=5.5) && canImport(_Concurrency)
     @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     func testCodableVoidHandler() {
-        struct Handler: AWSLambdaHandler {
+        struct Handler: LambdaHandler {
             typealias Event = Request
             typealias Output = Void
 
@@ -125,7 +123,7 @@ class CodableLambdaTest: XCTestCase {
 
     @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
     func testCodableHandler() {
-        struct Handler: AWSLambdaHandler {
+        struct Handler: LambdaHandler {
             typealias Event = Request
             typealias Output = Response
 

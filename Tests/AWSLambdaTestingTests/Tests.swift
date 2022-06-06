@@ -29,7 +29,7 @@ class LambdaTestingTests: XCTestCase {
             let message: String
         }
 
-        struct MyLambda: AWSLambdaHandler {
+        struct MyLambda: LambdaHandler {
             typealias Event = Request
             typealias Output = Response
 
@@ -53,7 +53,7 @@ class LambdaTestingTests: XCTestCase {
             let name: String
         }
 
-        struct MyLambda: AWSLambdaHandler {
+        struct MyLambda: LambdaHandler {
             typealias Event = Request
             typealias Output = Void
 
@@ -73,7 +73,7 @@ class LambdaTestingTests: XCTestCase {
     func testInvocationFailure() {
         struct MyError: Error {}
 
-        struct MyLambda: AWSLambdaHandler {
+        struct MyLambda: LambdaHandler {
             typealias Event = String
             typealias Output = Void
 
@@ -90,7 +90,7 @@ class LambdaTestingTests: XCTestCase {
     }
 
     func testAsyncLongRunning() {
-        struct MyLambda: AWSLambdaHandler {
+        struct MyLambda: LambdaHandler {
             typealias Event = String
             typealias Output = String
 

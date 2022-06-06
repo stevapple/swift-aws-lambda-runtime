@@ -32,7 +32,7 @@ import Glibc
 ///         level protocols ``EventLoopLambdaHandler`` and
 ///         ``ByteBufferLambdaHandler``.
 @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
-public protocol LambdaHandler<Provider>: EventLoopLambdaHandler {
+public protocol LambdaHandler: EventLoopLambdaHandler {
     /// The Lambda initialization method
     /// Use this method to initialize resources that will be used in every request.
     ///

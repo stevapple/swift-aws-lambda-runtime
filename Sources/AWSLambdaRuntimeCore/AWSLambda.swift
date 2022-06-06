@@ -22,12 +22,6 @@ extension AWSLambda: LambdaProvider {
     }
 }
 
-#if swift(>=5.5) && canImport(_Concurrency)
-// #if swift(>=5.7)
-// @available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
-// public typealias AWSLambdaHandler = LambdaHandler<AWSLambda>
-// #else
-@available(macOS 12, iOS 15, tvOS 15, watchOS 8, *)
-public protocol AWSLambdaHandler: LambdaHandler where Provider == AWSLambda {}
-// #endif
-#endif
+extension ByteBufferLambdaHandler where Provider == AWSLambda {
+    public typealias Provider = AWSLambda
+}
